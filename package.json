@@ -13,7 +13,9 @@
     "test:watch": "vitest",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,cjs}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mjs,cjs}\"",
-    "migration:init": "prisma migrate dev --name init --preview-feature"
+    "migration:init": "prisma migrate dev --name init --preview-feature",
+    "migration:save": "prisma migrate dev --name --preview-feature",
+    "prisma:studio": "prisma studio"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.5",
