@@ -27,6 +27,7 @@
     "@trpc/react-query": "^10.11.1",
     "@trpc/server": "^10.11.1",
     "clsx": "^1.2.1",
+    "framer-motion": "^9.0.4",
     "graphql": "^16.6.0",
     "graphql-request": "^5.1.0",
     "next": "13.1.6",

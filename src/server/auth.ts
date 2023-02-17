@@ -35,7 +35,7 @@ export const authOptions: NextAuthOptions = {
       authorization: {
         params: {
           scope:
-            "repo:status,repo_deployment,write:repo_hook,admin:org,notifications,read:user,project,workflow",
+            "repo:status repo_deployment write:repo_hook admin:org notifications read:user project workflow",
         },
       },
     }),
