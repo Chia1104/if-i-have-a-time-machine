@@ -43,7 +43,7 @@ const Home: NextPage = () => {
           Authorization: `Bearer ${sessionData?.accessToken}`,
         }
       ),
-    enabled: status === "authenticated",
+    enabled: status === "authenticated" && !!sessionData?.accessToken,
   });
   return (
     <>
