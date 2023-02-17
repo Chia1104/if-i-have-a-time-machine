@@ -2,7 +2,6 @@ import { type NextPage } from "next";
 import { useQuery } from "@tanstack/react-query";
 import githubClient from "@/helpers/gql/github.client";
 import { GET_ISSUES } from "@/helpers/gql/query";
-import { useToken } from "@/hooks";
 import { type FC } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { api } from "@/utils";
@@ -29,7 +28,7 @@ interface GetIssuesResponse {
 }
 
 const Home: NextPage = () => {
-  const { status, raw } = useToken();
+  const { data: sessionData, status } = useSession();
   const { data, isLoading, isSuccess } = useQuery(["issues"], {
     queryFn: () =>
       githubClient.request<GetIssuesResponse, GetIssuesRequest>(
@@ -41,7 +40,7 @@ const Home: NextPage = () => {
           limit: 10,
         },
         {
-          Authorization: `Bearer ${raw}`,
+          Authorization: `Bearer ${sessionData?.accessToken}`,
         }
       ),
     enabled: status === "authenticated",
