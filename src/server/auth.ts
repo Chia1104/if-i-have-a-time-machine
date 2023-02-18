@@ -37,7 +37,7 @@ export const authOptions: NextAuthOptions = {
       const account = await prisma.account.findUnique({
         where: { userId: user.id },
       });
-      if ((account?.expires_at ?? 0) < Date.now()) {
+      if ((account?.expires_at ?? 0) < Math.floor(Date.now() / 1000)) {
         try {
           const response = await fetch(
             "https://github.com/login/oauth/access_token",
@@ -67,7 +67,8 @@ export const authOptions: NextAuthOptions = {
           await prisma.account.update({
             data: {
               access_token: tokens.access_token,
-              expires_at: Date.now() + tokens.expires_in * 1000,
+              expires_at:
+                Math.floor(Date.now() / 1000) + tokens.expires_in * 1000,
               refresh_token: tokens.refresh_token ?? account?.refresh_token,
               refresh_token_expires_in: tokens.refresh_token_expires_in,
             },
