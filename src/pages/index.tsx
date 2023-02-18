@@ -1,10 +1,11 @@
 import { type NextPage } from "next";
-import { useQuery } from "@tanstack/react-query";
-import githubClient from "@/helpers/gql/github.client";
-import { GET_ISSUES } from "@/helpers/gql/query";
-import { type FC } from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
-import { api } from "@/utils";
+import Head from "next/head";
+// import { useQuery } from "@tanstack/react-query";
+// import githubClient from "@/helpers/gql/github.client";
+// import { GET_ISSUES } from "@/helpers/gql/query";
+// import { type FC } from "react";
+// import { useSession, signIn, signOut } from "next-auth/react";
+// import { api } from "@/utils";
 
 interface GetIssuesRequest {
   owner: string;
@@ -28,62 +29,37 @@ interface GetIssuesResponse {
 }
 
 const Home: NextPage = () => {
-  const { data: sessionData, status } = useSession();
-  const { data, isLoading, isSuccess } = useQuery(["issues"], {
-    queryFn: () =>
-      githubClient.request<GetIssuesResponse, GetIssuesRequest>(
-        GET_ISSUES,
-        {
-          owner: "chia1104",
-          name: "chias-web-nextjs",
-          sort: "CREATED_AT",
-          limit: 10,
-        },
-        {
-          Authorization: `Bearer ${sessionData?.accessToken}`,
-        }
-      ),
-    enabled: status === "authenticated" && !!sessionData?.accessToken,
-  });
+  // const { data: sessionData, status } = useSession();
+  // const { data, isLoading, isSuccess } = useQuery(["issues"], {
+  //   queryFn: () =>
+  //     githubClient.request<GetIssuesResponse, GetIssuesRequest>(
+  //       GET_ISSUES,
+  //       {
+  //         owner: "chia1104",
+  //         name: "chias-web-nextjs",
+  //         sort: "CREATED_AT",
+  //         limit: 10,
+  //       },
+  //       {
+  //         Authorization: `Bearer ${sessionData?.accessToken}`,
+  //       }
+  //     ),
+  //   enabled: status === "authenticated" && !!sessionData?.accessToken,
+  // });
   return (
-    <>
-      {isLoading && <div>Loading...</div>}
-      {isSuccess && (
-        <div>
-          {data.repository.issues.edges.map((issue) => (
-            <div key={issue.node.id}>
-              <h3>{issue.node.title}</h3>
-              <p>{issue.node.body}</p>
-            </div>
-          ))}
-        </div>
-      )}
-      <AuthShowcase />
-    </>
+    <div className="ctw-component-container main">
+      <Head>
+        <title>IIHTM</title>
+        <meta name="description" content="IIHTM" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <h2 className="text-2xl font-bold">The project is under development.</h2>
+      <p>
+        If you want to help, please contact me at{" "}
+        <a href="mailto:yuyuchia7423@gmail.com">Email</a>
+      </p>
+    </div>
   );
 };
 
 export default Home;
-
-const AuthShowcase: FC = () => {
-  const { data: sessionData } = useSession();
-
-  const { data: secretMessage } = api.example.getSecretMessage.useQuery(
-    undefined, // no input
-    { enabled: sessionData?.user !== undefined }
-  );
-
-  return (
-    <div className="flex flex-col items-center justify-center gap-4">
-      <p className="text-center text-2xl">
-        {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
-        {secretMessage && <span> - {secretMessage}</span>}
-      </p>
-      <button
-        className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-        onClick={sessionData ? () => void signOut() : () => void signIn()}>
-        {sessionData ? "Sign out" : "Sign in"}
-      </button>
-    </div>
-  );
-};

@@ -4,6 +4,7 @@ import {
   type NextAuthOptions,
   type DefaultSession,
   type TokenSet,
+  type DefaultUser,
 } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
@@ -14,9 +15,14 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
+      role: "ADMIN" | "USER";
     } & DefaultSession["user"];
     error?: "RefreshAccessTokenError";
     accessToken: string;
+  }
+
+  interface User extends DefaultUser {
+    role: "ADMIN" | "USER";
   }
 }
 
@@ -87,6 +93,7 @@ export const authOptions: NextAuthOptions = {
       }
       if (session.user) {
         session.user.id = user.id;
+        session.user.role = user.role;
       }
       return {
         ...session,

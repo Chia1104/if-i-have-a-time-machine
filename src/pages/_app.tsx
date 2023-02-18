@@ -2,7 +2,7 @@ import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { api } from "@/utils";
 import "../styles/globals.css";
-import { RootProvider, PageTransition } from "@/components";
+import { RootProvider, PageTransition, MainNav } from "@/components";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -11,6 +11,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <RootProvider session={session}>
       <PageTransition>
+        <MainNav />
         <Component {...pageProps} />
       </PageTransition>
     </RootProvider>

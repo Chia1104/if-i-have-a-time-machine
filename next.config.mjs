@@ -1,10 +1,15 @@
 // @ts-check
+import withBundleAnalyzerImport from "@next/bundle-analyzer";
 
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
  * This is especially useful for Docker builds.
  */
 !process.env.SKIP_ENV_VALIDATION && (await import("./src/env.mjs"));
+
+const withBundleAnalyzer = withBundleAnalyzerImport({
+  enabled: process.env.ANALYZE === "true",
+});
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -25,4 +30,8 @@ const config = {
     defaultLocale: "en",
   },
 };
-export default config;
+
+const plugins = [withBundleAnalyzer];
+
+const nextComposePlugins = plugins.reduce((acc, plugin) => plugin(acc), config);
+export default nextComposePlugins;

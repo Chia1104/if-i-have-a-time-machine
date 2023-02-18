@@ -18,7 +18,7 @@ class WebDoc extends Document {
     return (
       <Html lang="en">
         <Head />
-        <body>
+        <body className="ctw-component-bg-primary">
           <Main />
           <NextScript />
         </body>
