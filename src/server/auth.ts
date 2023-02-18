@@ -55,8 +55,10 @@ export const authOptions: NextAuthOptions = {
               }),
             }
           );
-          const tokens: TokenSet & { expires_in: number } =
-            await response.json();
+          const tokens: TokenSet & {
+            expires_in: number;
+            refresh_token_expires_in: number;
+          } = await response.json();
 
           if (!response.ok || !tokens.access_token) throw tokens;
 
@@ -67,6 +69,7 @@ export const authOptions: NextAuthOptions = {
               access_token: tokens.access_token,
               expires_at: Date.now() + tokens.expires_in * 1000,
               refresh_token: tokens.refresh_token ?? account?.refresh_token,
+              refresh_token_expires_in: tokens.refresh_token_expires_in,
             },
             where: {
               provider_providerAccountId: {
