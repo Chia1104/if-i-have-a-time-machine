@@ -67,8 +67,7 @@ export const authOptions: NextAuthOptions = {
           await prisma.account.update({
             data: {
               access_token: tokens.access_token,
-              expires_at:
-                Math.floor(Date.now() / 1000) + tokens.expires_in * 1000,
+              expires_at: Math.floor(Date.now() / 1000 + tokens.expires_in),
               refresh_token: tokens.refresh_token ?? account?.refresh_token,
               refresh_token_expires_in: tokens.refresh_token_expires_in,
             },
