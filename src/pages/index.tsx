@@ -1,63 +1,63 @@
-import { type NextPage } from "next";
+import { type NextPage, type GetServerSideProps } from "next";
 import Head from "next/head";
-// import { useQuery } from "@tanstack/react-query";
-// import githubClient from "@/helpers/gql/github.client";
-// import { GET_ISSUES } from "@/helpers/gql/query";
-// import { type FC } from "react";
-// import { useSession, signIn, signOut } from "next-auth/react";
-// import { api } from "@/utils";
+import { ProjectList } from "@/components";
+import githubClient from "@/helpers/gql/github.client";
+import {
+  GET_REPOS,
+  GetReposRequest,
+  GetReposResponse,
+} from "@/helpers/gql/query";
+import { getServerAuthSession } from "@/server/auth";
 
-interface GetIssuesRequest {
-  owner: string;
-  name: string;
-  sort: "CREATED_AT" | "UPDATED_AT" | "COMMENTS";
-  limit: number;
+interface Props {
+  initialData?: GetReposResponse | null;
 }
 
-interface GetIssuesResponse {
-  repository: {
-    issues: {
-      edges: {
-        node: {
-          id: string;
-          title: string;
-          body: string;
-        };
-      }[];
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getServerAuthSession(context);
+  try {
+    const data = await githubClient.request<GetReposResponse, GetReposRequest>(
+      GET_REPOS,
+      {
+        owner: session?.user?.name ?? "",
+        limit: 10,
+        sort: "CREATED_AT",
+      },
+      {
+        Authorization: `Bearer ${session?.accessToken}`,
+      }
+    );
+    return {
+      props: {
+        initialData: data,
+      },
     };
-  };
-}
+  } catch (error) {
+    console.error(error);
+    return {
+      props: {
+        initialData: null,
+      },
+    };
+  }
+};
 
-const Home: NextPage = () => {
-  // const { data: sessionData, status } = useSession();
-  // const { data, isLoading, isSuccess } = useQuery(["issues"], {
-  //   queryFn: () =>
-  //     githubClient.request<GetIssuesResponse, GetIssuesRequest>(
-  //       GET_ISSUES,
-  //       {
-  //         owner: "chia1104",
-  //         name: "chias-web-nextjs",
-  //         sort: "CREATED_AT",
-  //         limit: 10,
-  //       },
-  //       {
-  //         Authorization: `Bearer ${sessionData?.accessToken}`,
-  //       }
-  //     ),
-  //   enabled: status === "authenticated" && !!sessionData?.accessToken,
-  // });
+const Home: NextPage<Props> = ({ initialData }) => {
   return (
-    <div className="ctw-component-container main">
+    <div className="ctw-component-container main gap-5 pt-20">
       <Head>
         <title>IIHTM</title>
         <meta name="description" content="IIHTM" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <h2 className="text-2xl font-bold">The project is under development.</h2>
-      <p>
-        If you want to help, please contact me at{" "}
-        <a href="mailto:yuyuchia7423@gmail.com">Email</a>
-      </p>
+      <div className="flex flex-col gap-5">
+        <ProjectList initialData={initialData} />
+        <p>
+          If you want to help, please contact me by{" "}
+          <a href="mailto:yuyuchia7423@gmail.com">Email</a>
+        </p>
+      </div>
     </div>
   );
 };

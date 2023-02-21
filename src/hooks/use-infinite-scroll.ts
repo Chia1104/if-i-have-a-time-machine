@@ -9,7 +9,7 @@ export interface UseInfiniteScrollOptions {
 }
 
 export interface UseInfiniteScrollResult {
-  ref: (node: HTMLElement) => void;
+  ref: (node: HTMLDivElement) => void;
   observer: IntersectionObserver | null;
 }
 
@@ -25,7 +25,7 @@ const useInfiniteScroll = (
   } = option;
   const observer = useRef<IntersectionObserver | null>(null);
   const ref = useCallback(
-    (node: HTMLElement) => {
+    (node: HTMLDivElement) => {
       if (isLoading || isError || !hasMore) return;
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {

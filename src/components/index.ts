@@ -16,3 +16,4 @@ export { default as Image } from "./image";
 export { default as MainNav } from "./main-nav";
 export { default as IsLogin } from "./is-login";
 export * from "./popover";
+export { default as ProjectList } from "./project-list";
