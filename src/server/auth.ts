@@ -24,6 +24,10 @@ declare module "next-auth" {
   interface User extends DefaultUser {
     role: "ADMIN" | "USER";
   }
+
+  interface Profile {
+    login: string;
+  }
 }
 
 declare module "next-auth/jwt" {
@@ -38,26 +42,13 @@ declare module "next-auth/jwt" {
 export const authOptions: NextAuthOptions = {
   useSecureCookies: env.NODE_ENV === "production",
   callbacks: {
-    // async signIn({ user, profile, account }) {
-    //   if (!user || !profile) return false;
-    //   try {
-    //     await prisma.user.upsert({
-    //       where: { id: user.id },
-    //       update: {
-    //         name: profile.login,
-    //       },
-    //       create: {
-    //         ...user,
-    //         name: profile.login,
-    //       },
-    //     });
-    //   } catch (error) {
-    //     console.error("Error creating/updating user", error);
-    //     return false;
-    //   }
-    //   return true;
-    // },
+    async signIn({ user, profile }) {
+      if (!profile || !user) return false;
+      user.name = profile.login;
+      return true;
+    },
     async session({ session, user }) {
+      console.log("session", session, user);
       let accessToken = "";
       const account = await prisma.account.findUnique({
         where: { userId: user.id },
