@@ -20,7 +20,7 @@ const MainNav: FC = () => {
 
   return (
     <>
-      <nav className="ctw-component-bg-secondary fixed top-0 z-50 flex h-[65px] w-screen items-center justify-center shadow-lg shadow-gray-200 dark:border-b dark:border-gray-700 dark:shadow-none">
+      <nav className="ctw-component-bg-secondary fixed top-0 z-50 flex h-[65px] w-screen items-center justify-center px-5 shadow-lg shadow-gray-200 dark:border-b dark:border-gray-700 dark:shadow-none">
         <div className="container flex w-[100%]">
           <div className="flex w-[30%] items-center justify-start">
             <Link href="/" className="ml-3">

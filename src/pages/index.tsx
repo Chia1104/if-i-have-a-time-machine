@@ -71,14 +71,14 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 
 const Home: NextPage<Props> = () => {
   return (
-    <div className="ctw-component-container main gap-5 pt-20">
-      <h2 className="text-2xl font-bold">The project is under development.</h2>
-      <div className="flex flex-col gap-5">
+    <div className="ctw-component-container main flex flex-col items-start gap-5 pt-28">
+      <h2 className="text-3xl font-bold">Tracking</h2>
+      <div className="flex w-full flex-col gap-y-5">
+        Here will be the tracking section
+      </div>
+      <h2 className="text-3xl font-bold">Projects</h2>
+      <div className="flex w-full flex-col gap-y-5">
         <ProjectList />
-        <p>
-          If you want to help, please contact me by{" "}
-          <a href="mailto:yuyuchia7423@gmail.com">Email</a>
-        </p>
       </div>
     </div>
   );

@@ -11,6 +11,10 @@
         @apply bg-ctw_white/90 dark:bg-ctw_dark/90 text-ctw_dark dark:text-ctw_white transition ease-in-out backdrop-blur-sm
     }
 
+    .ctw-component-bg-card {
+        @apply border border-slate-100 bg-white shadow-md outline-none dark:border-slate-800 dark:bg-slate-800 transition ease-in-out backdrop-blur-sm
+    }
+
     .ctw-component-button-primary {
         @apply
         bg-ctw_primary rounded-full drop-shadow-lg text-ctw_white hover:bg-ctw_secondary transition ease-in-out flex justify-center items-center px-3 py-1
