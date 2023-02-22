@@ -115,13 +115,9 @@ const ProjectList: FC<Props> = ({ initialData, session: authSession }) => {
     hasNextPage,
   } = useInfiniteQuery(["repos"], {
     queryFn: ({ pageParam, signal }) =>
-      githubClient.request<GetReposResponse, GetReposRequest>(
-        GET_REPOS,
-        // {
-        //   document: GET_REPOS,
-        //   signal,
-        // },
-        {
+      githubClient.request<GetReposResponse, GetReposRequest>({
+        document: GET_REPOS,
+        variables: {
           owner: !!authSession
             ? authSession.user.name ?? ""
             : session?.user?.name ?? "",
@@ -129,10 +125,11 @@ const ProjectList: FC<Props> = ({ initialData, session: authSession }) => {
           sort: "CREATED_AT",
           cursor: pageParam ? pageParam : undefined,
         },
-        {
+        requestHeaders: {
           Authorization: `Bearer ${session?.accessToken}`,
-        }
-      ),
+        },
+        signal,
+      }),
     getNextPageParam: (lastPage) => {
       if (lastPage.user.repositories.pageInfo.hasNextPage) {
         return lastPage.user.repositories.pageInfo.endCursor;
