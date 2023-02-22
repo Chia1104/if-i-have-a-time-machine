@@ -2,7 +2,7 @@ import { type FC } from "react";
 
 const Footer: FC = () => {
   return (
-    <footer className="ctw-component-bg-secondary flex flex-col items-center justify-center gap-3 py-8 text-gray-500 dark:border-t dark:border-gray-700">
+    <footer className="ctw-component-bg-secondary flex flex-col items-center justify-center gap-3 py-8 px-10 text-gray-500 dark:border-t dark:border-gray-700">
       <p>
         The project is still under development. If you want to help, please send
         me <a href="mailto:yuyuchia7423@gmail.com">Email</a>

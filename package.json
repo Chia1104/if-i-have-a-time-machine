@@ -27,6 +27,7 @@
     "@radix-ui/react-popover": "^1.0.3",
     "@reduxjs/toolkit": "^1.9.2",
     "@tanstack/react-query": "^4.24.6",
+    "@tanstack/react-virtual": "3.0.0-beta.49",
     "@trpc/client": "^10.11.1",
     "@trpc/next": "^10.11.1",
     "@trpc/react-query": "^10.11.1",

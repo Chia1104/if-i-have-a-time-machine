@@ -12,6 +12,7 @@ specifiers:
   '@reduxjs/toolkit': ^1.9.2
   '@tailwindcss/line-clamp': ^0.4.2
   '@tanstack/react-query': ^4.24.6
+  '@tanstack/react-virtual': 3.0.0-beta.49
   '@testing-library/react': ^14.0.0
   '@trpc/client': ^10.11.1
   '@trpc/next': ^10.11.1
@@ -67,6 +68,7 @@ dependencies:
   '@radix-ui/react-popover': 1.0.3_zula6vjvt3wdocc4mwcxqa6nzi
   '@reduxjs/toolkit': 1.9.2_react@18.2.0
   '@tanstack/react-query': 4.24.6_biqbaboplfbrettd7655fr4n2y
+  '@tanstack/react-virtual': 3.0.0-beta.49_react@18.2.0
   '@trpc/client': 10.11.1_@trpc+server@10.11.1
   '@trpc/next': 10.11.1_ck2pp32np6ey6osxngwuwfgwei
   '@trpc/react-query': 10.11.1_2pugaexxlcekgcbbhj75jqmiqi
@@ -1166,6 +1168,19 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       use-sync-external-store: 1.2.0_react@18.2.0
+    dev: false
+
+  /@tanstack/react-virtual/3.0.0-beta.49_react@18.2.0:
+    resolution: {integrity: sha512-bd7WBHu1LUBbs3qYZnvWSo4AhcSysc/QyBoHpGK2XOMTXzP9D4FVISMfCvdIbi+JoTqdZqhtaV7c1WY5gzZRlQ==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@tanstack/virtual-core': 3.0.0-beta.49
+      react: 18.2.0
+    dev: false
+
+  /@tanstack/virtual-core/3.0.0-beta.49:
+    resolution: {integrity: sha512-tPmuUiQwUW3PdQirBjlqeZD1JMn7bcyNE6stS50RUu5vyopzLFALnN0uTBftrZOcHpkRtYVa0ifz9fB9yKKJYw==}
     dev: false
 
   /@testing-library/dom/9.0.0:
