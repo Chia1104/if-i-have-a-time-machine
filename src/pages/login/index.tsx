@@ -1,6 +1,22 @@
-import type { NextPage } from "next";
+import type { NextPage, GetServerSideProps } from "next";
 import { signIn } from "next-auth/react";
 import Head from "next/head";
+import { getServerAuthSession } from "@/server/auth";
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getServerAuthSession(context);
+  if (session) {
+    return {
+      props: {},
+      redirect: {
+        destination: "/",
+      },
+    };
+  }
+  return {
+    props: {},
+  };
+};
 
 const Login: NextPage = () => {
   return (
