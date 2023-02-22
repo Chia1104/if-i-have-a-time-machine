@@ -1,5 +1,15 @@
 import { gql } from "graphql-request";
 
+type Error = {
+  type: string;
+  path: string[];
+  locations: {
+    line: number;
+    column: number;
+  }[];
+  message: string;
+}[];
+
 type GetIssuesRequest = {
   owner: string;
   name: string;
@@ -158,4 +168,5 @@ export type {
   GetIssuesResponse,
   GetReposRequest,
   GetReposResponse,
+  Error,
 };

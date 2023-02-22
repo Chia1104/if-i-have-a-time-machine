@@ -4,55 +4,77 @@ import { ProjectList } from "@/components";
 import githubClient from "@/helpers/gql/github.client";
 import {
   GET_REPOS,
-  GetReposRequest,
-  GetReposResponse,
+  type GetReposRequest,
+  type GetReposResponse,
 } from "@/helpers/gql/query";
 import { getServerAuthSession } from "@/server/auth";
+import { type Session } from "next-auth";
 
 interface Props {
+  session?: Session | null;
   initialData?: GetReposResponse | null;
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps<Props> = async (
+  context
+) => {
   const session = await getServerAuthSession(context);
-  try {
-    const data = await githubClient.request<GetReposResponse, GetReposRequest>(
-      GET_REPOS,
-      {
-        owner: session?.user?.name ?? "",
-        limit: 10,
-        sort: "CREATED_AT",
-      },
-      {
-        Authorization: `Bearer ${session?.accessToken}`,
-      }
-    );
+  if (!session || session.error) {
     return {
-      props: {
-        initialData: data,
-      },
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      props: {
-        initialData: null,
+      props: {},
+      redirect: {
+        destination: "/login",
       },
     };
   }
+  // try {
+  //   const data = await githubClient.request<GetReposResponse, GetReposRequest>(
+  //     GET_REPOS,
+  //     {
+  //       owner: session?.user?.name ?? "",
+  //       limit: 10,
+  //       sort: "CREATED_AT",
+  //     },
+  //     {
+  //       Authorization: `Bearer ${session?.accessToken}`,
+  //     }
+  //   );
+  //   return {
+  //     props: {
+  //       session,
+  //       initialData: data,
+  //     },
+  //   };
+  // } catch (error:
+  //   | any
+  //   | {
+  //       response: {
+  //         message: string;
+  //         status: number;
+  //       };
+  //     }) {
+  //   if (error.response.status === 401) {
+  //     return {
+  //       props: {},
+  //       redirect: {
+  //         destination: "/login",
+  //       },
+  //     };
+  //   }
+  // }
+  return {
+    props: {
+      initialData: null,
+    },
+  };
 };
 
-const Home: NextPage<Props> = ({ initialData }) => {
+const Home: NextPage<Props> = () => {
   return (
     <div className="ctw-component-container main gap-5 pt-20">
-      <Head>
-        <title>IIHTM</title>
-        <meta name="description" content="IIHTM" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <h2 className="text-2xl font-bold">The project is under development.</h2>
       <div className="flex flex-col gap-5">
-        <ProjectList initialData={initialData} />
+        <ProjectList />
         <p>
           If you want to help, please contact me by{" "}
           <a href="mailto:yuyuchia7423@gmail.com">Email</a>

@@ -41,6 +41,9 @@ declare module "next-auth/jwt" {
 
 export const authOptions: NextAuthOptions = {
   useSecureCookies: env.NODE_ENV === "production",
+  pages: {
+    signIn: "/login",
+  },
   callbacks: {
     async signIn({ user, profile }) {
       if (!profile || !user) return false;

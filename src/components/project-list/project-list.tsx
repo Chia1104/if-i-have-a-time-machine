@@ -1,16 +1,18 @@
-import { type FC, forwardRef } from "react";
+import { type FC, forwardRef, useMemo } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import githubClient from "@/helpers/gql/github.client";
 import {
   GET_REPOS,
-  GetReposRequest,
-  GetReposResponse,
+  type GetReposRequest,
+  type GetReposResponse,
 } from "@/helpers/gql/query";
 import { useSession } from "next-auth/react";
 import { useInfiniteScroll } from "@/hooks";
+import { type Session } from "next-auth";
 
 interface Props {
   initialData?: GetReposResponse | null;
+  session?: Session | null;
 }
 
 const ProjectItem = forwardRef<
@@ -32,20 +34,22 @@ const ProjectItem = forwardRef<
 });
 ProjectItem.displayName = "ProjectItem";
 
-const ProjectList: FC<Props> = ({ initialData }) => {
+const ProjectList: FC<Props> = ({ initialData, session: authSession }) => {
   const { data: session, status } = useSession();
   const {
     data,
-    isLoading: isLoadingRepos,
+    isFetching: isFetchingRepos,
     isSuccess,
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery(["repos"], {
-    queryFn: ({ pageParam = "" }) =>
+    queryFn: ({ pageParam }) =>
       githubClient.request<GetReposResponse, GetReposRequest>(
         GET_REPOS,
         {
-          owner: session?.user?.name ?? "",
+          owner: !!authSession
+            ? authSession.user.name ?? ""
+            : session?.user?.name ?? "",
           limit: 10,
           sort: "CREATED_AT",
           cursor: pageParam ? pageParam : undefined,
@@ -60,34 +64,38 @@ const ProjectList: FC<Props> = ({ initialData }) => {
       }
       return undefined;
     },
-    enabled: status === "authenticated" && !!session?.accessToken,
-    // initialData: initialData ? { pages: [initialData] } : undefined,
+    enabled: !!authSession
+      ? !!authSession
+      : status === "authenticated" && !!session?.accessToken,
+    // initialData: initialData && {
+    //   pages: [initialData],
+    //   pageParams: [initialData.user.repositories.pageInfo.endCursor],
+    // },
   });
   const { ref } = useInfiniteScroll({
-    isLoading: isLoadingRepos,
+    isLoading: isFetchingRepos,
     hasMore: hasNextPage ?? false,
     onLoadMore: fetchNextPage,
     intersectionObserverInit: {
       rootMargin: "0px 0px 200px 0px",
     },
   });
+  const flatData = useMemo(() => {
+    if (!isSuccess || !data) return [];
+    return data.pages.flatMap((page) => page.user.repositories.edges);
+  }, [data, isSuccess]);
   return (
     <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
       {isSuccess &&
-        data?.pages.map((page) => {
-          return page.user.repositories.edges.map((edge, i) => {
+        flatData?.map((page, index) => {
+          if (index === flatData.length - 1) {
             return (
-              <>
-                {page.user.repositories.edges.length - 1 === i ? (
-                  <ProjectItem key={edge.node.id} repo={edge.node} ref={ref} />
-                ) : (
-                  <ProjectItem key={edge.node.id} repo={edge.node} />
-                )}
-              </>
+              <ProjectItem key={page.node.id} repo={page.node} ref={ref} />
             );
-          });
+          }
+          return <ProjectItem key={page.node.id} repo={page.node} />;
         })}
-      {isLoadingRepos && <p>Loading...</p>}
+      {isFetchingRepos && <p>Loading...</p>}
     </div>
   );
 };
