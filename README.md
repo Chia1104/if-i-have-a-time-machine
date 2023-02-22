@@ -52,7 +52,7 @@ But you still need to run `pnpm migration:init` to initialize the database.
 pnpm i
 
 # Initialize database
-pnpm migrate:init
+pnpm migration:init
 ```
 
 ### Run in Development Mode
