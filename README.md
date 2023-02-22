@@ -1,6 +1,6 @@
 # If I Have a Time Machine (IIHTM)
 
-![IIHTM](/public/iihtm-700.png)
+![IIHTM](/public/iihtm-200.png)
 
 Manage your GitHub repositories with ease.
 
