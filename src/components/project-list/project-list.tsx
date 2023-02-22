@@ -114,9 +114,13 @@ const ProjectList: FC<Props> = ({ initialData, session: authSession }) => {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery(["repos"], {
-    queryFn: ({ pageParam }) =>
+    queryFn: ({ pageParam, signal }) =>
       githubClient.request<GetReposResponse, GetReposRequest>(
         GET_REPOS,
+        // {
+        //   document: GET_REPOS,
+        //   signal,
+        // },
         {
           owner: !!authSession
             ? authSession.user.name ?? ""
