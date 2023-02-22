@@ -23,6 +23,7 @@ export const getBaseUrl = () => {
 export const api = createTRPCNext<AppRouter>({
   config() {
     return {
+      abortOnUnmount: true,
       /**
        * Transformer used for data de-serialization from the server.
        *
