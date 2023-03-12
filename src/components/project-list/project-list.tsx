@@ -123,10 +123,12 @@ const ProjectList: FC<Props> = ({ initialData, session: authSession }) => {
             : session?.user?.name ?? "",
           limit: 10,
           sort: "CREATED_AT",
-          cursor: pageParam ? pageParam : undefined,
+          cursor: pageParam,
         },
         requestHeaders: {
-          Authorization: `Bearer ${session?.accessToken}`,
+          Authorization: `Bearer ${
+            authSession?.accessToken ?? session?.accessToken
+          }`,
         },
         signal,
       }),
@@ -140,10 +142,14 @@ const ProjectList: FC<Props> = ({ initialData, session: authSession }) => {
     enabled: !!authSession
       ? !!authSession
       : status === "authenticated" && !!session?.accessToken,
-    // initialData: initialData && {
-    //   pages: [initialData],
-    //   pageParams: [initialData.user.repositories.pageInfo.endCursor],
-    // },
+    initialData: () => {
+      if (!initialData) return undefined;
+      return {
+        pages: [initialData],
+        pageParams: [undefined],
+      };
+    },
+    staleTime: 1000 * 60 * 5,
   });
   const { ref } = useInfiniteScroll({
     isLoading: isFetchingRepos,

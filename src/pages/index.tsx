@@ -1,5 +1,4 @@
 import { type NextPage, type GetServerSideProps } from "next";
-import Head from "next/head";
 import { ProjectList } from "@/components";
 import githubClient from "@/helpers/gql/github.client";
 import {
@@ -27,41 +26,41 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       },
     };
   }
-  // try {
-  //   const data = await githubClient.request<GetReposResponse, GetReposRequest>(
-  //     GET_REPOS,
-  //     {
-  //       owner: session?.user?.name ?? "",
-  //       limit: 10,
-  //       sort: "CREATED_AT",
-  //     },
-  //     {
-  //       Authorization: `Bearer ${session?.accessToken}`,
-  //     }
-  //   );
-  //   return {
-  //     props: {
-  //       session,
-  //       initialData: data,
-  //     },
-  //   };
-  // } catch (error:
-  //   | any
-  //   | {
-  //       response: {
-  //         message: string;
-  //         status: number;
-  //       };
-  //     }) {
-  //   if (error.response.status === 401) {
-  //     return {
-  //       props: {},
-  //       redirect: {
-  //         destination: "/login",
-  //       },
-  //     };
-  //   }
-  // }
+  try {
+    const data = await githubClient.request<GetReposResponse, GetReposRequest>(
+      GET_REPOS,
+      {
+        owner: session?.user?.name ?? "",
+        limit: 10,
+        sort: "CREATED_AT",
+      },
+      {
+        Authorization: `Bearer ${session?.accessToken}`,
+      }
+    );
+    return {
+      props: {
+        session,
+        initialData: data,
+      },
+    };
+  } catch (error:
+    | any
+    | {
+        response: {
+          message: string;
+          status: number;
+        };
+      }) {
+    if (error.response.status === 401) {
+      return {
+        props: {},
+        redirect: {
+          destination: "/login",
+        },
+      };
+    }
+  }
   return {
     props: {
       initialData: null,
@@ -69,7 +68,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   };
 };
 
-const Home: NextPage<Props> = () => {
+const Home: NextPage<Props> = ({ initialData, session }) => {
   return (
     <div className="ctw-component-container main flex flex-col items-start gap-5 pt-28">
       <h2 className="text-3xl font-bold">Tracking</h2>
@@ -78,7 +77,7 @@ const Home: NextPage<Props> = () => {
       </div>
       <h2 className="text-3xl font-bold">Projects</h2>
       <div className="flex w-full flex-col gap-y-5">
-        <ProjectList />
+        <ProjectList initialData={initialData} session={session} />
       </div>
     </div>
   );
