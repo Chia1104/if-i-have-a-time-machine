@@ -1,8 +1,14 @@
 import { type FC, forwardRef, useMemo, useState } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueries } from "@tanstack/react-query";
 import githubClient from "@/helpers/gql/github.client";
 import {
   GET_REPOS,
+  GET_REPO_ISSUES,
+  GET_REPO_DETAILS,
+  type GetRepoDetailsRequest,
+  type GetRepoDetailsResponse,
+  type GetRepoIssuesRequest,
+  type GetRepoIssuesResponse,
   type GetReposRequest,
   type GetReposResponse,
 } from "@/helpers/gql/query";
@@ -34,6 +40,105 @@ const ProjectLoader = () => {
         <div className="h-3 w-3 rounded-full bg-gray-300" />
       </div>
     </div>
+  );
+};
+
+const ProjectDetailModal: FC<{
+  isOpen: boolean;
+  handleModal: () => void;
+  session?: Session | null;
+  projectName: string;
+}> = ({ isOpen, handleModal, session: authSession, projectName }) => {
+  const { data: session, status } = useSession();
+  const result = useQueries({
+    queries: [
+      {
+        queryKey: [projectName, "details"],
+        queryFn: () => {
+          return githubClient.request<
+            GetRepoDetailsResponse,
+            GetRepoDetailsRequest
+          >({
+            document: GET_REPO_DETAILS,
+            variables: {
+              owner: authSession?.user?.name || session?.user?.name || "",
+              name: projectName,
+            },
+            requestHeaders: {
+              Authorization: `Bearer ${
+                authSession?.accessToken ?? session?.accessToken
+              }`,
+            },
+          });
+        },
+        enabled: (!!authSession || !!session) && isOpen,
+      },
+      {
+        queryKey: [projectName, "issues"],
+        queryFn: () => {
+          return githubClient.request<
+            GetRepoIssuesResponse,
+            GetRepoIssuesRequest
+          >({
+            document: GET_REPO_ISSUES,
+            variables: {
+              owner: authSession?.user?.name || session?.user?.name || "",
+              name: projectName,
+              sort: "CREATED_AT",
+              limit: 10,
+            },
+            requestHeaders: {
+              Authorization: `Bearer ${
+                authSession?.accessToken ?? session?.accessToken
+              }`,
+            },
+          });
+        },
+        enabled: (!!authSession || !!session) && isOpen,
+      },
+    ],
+  });
+  return (
+    <Modal
+      isOpen={isOpen}
+      handleModal={handleModal}
+      className="relative mx-5 h-screen w-full max-w-[800px]">
+      <div className="ctw-component-scroll-bar ctw-component-bg-secondary flex h-full w-full flex-col gap-5 overflow-y-scroll rounded-2xl p-10">
+        <span
+          className="i-mdi-close absolute top-0 right-0 mt-5 mr-5 h-7 w-7 cursor-pointer hover:opacity-50"
+          onClick={handleModal}
+        />
+        <h3 className="text-3xl font-bold">
+          {result?.[0]?.data?.repository?.name}
+        </h3>
+        <p className="text-sm text-gray-500">
+          {result?.[0]?.data?.repository?.description}
+        </p>
+        <div className="flex flex-col gap-2">
+          <h4 className="text-lg font-bold">Languages</h4>
+          <span className="flex items-center gap-2 text-sm text-gray-500">
+            {result?.[0]?.data?.repository?.primaryLanguage?.name}
+            <div
+              className="h-4 w-4 rounded-full bg-gray-500"
+              style={{
+                backgroundColor:
+                  result?.[0]?.data?.repository?.primaryLanguage?.color,
+              }}
+            />
+          </span>
+        </div>
+        <p className="break-words">
+          {result?.[0].isLoading
+            ? "LOADING..."
+            : JSON.stringify(result?.[0].data)}
+        </p>
+        <p className="break-words">
+          {result?.[1].isLoading
+            ? "LOADING..."
+            : JSON.stringify(result?.[1].data)}
+        </p>
+      </div>
+    </Modal>
   );
 };
 
@@ -76,30 +181,14 @@ const ProjectItem = forwardRef<
           onClick={() => setIsOpen(true)}
         />
       </div>
-      <Modal
+      <ProjectDetailModal
         isOpen={isOpen}
         handleModal={() => {
           setIsOpen(!isOpen);
           router.push("/", undefined, { shallow: true });
         }}
-        className="mx-5 w-full max-w-[800px]">
-        <div className="ctw-component-bg-secondary flex w-full flex-col gap-5 rounded-2xl p-10">
-          <h3 className="text-xl font-bold">{repo?.name}</h3>
-          <p className="text-sm text-gray-500">{repo?.description}</p>
-          <div className="flex flex-col gap-2">
-            <h4 className="text-lg font-bold">Languages</h4>
-            <span className="flex items-center gap-2 text-sm text-gray-500">
-              {repo?.primaryLanguage?.name}
-              <div
-                className="h-4 w-4 rounded-full bg-gray-500"
-                style={{
-                  backgroundColor: repo?.primaryLanguage?.color,
-                }}
-              />
-            </span>
-          </div>
-        </div>
-      </Modal>
+        projectName={repo.name}
+      />
     </>
   );
 });

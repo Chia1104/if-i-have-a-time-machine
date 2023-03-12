@@ -51,6 +51,10 @@
         @apply
         min-h-screen flex flex-col justify-center items-center px-16 py-8
     }
+
+    .ctw-component-scroll-bar {
+        @apply scrollbar-thin scrollbar-thumb-ctw_secondary scrollbar-thumb-rounded-full
+    }
 }
 
 html,
