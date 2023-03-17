@@ -219,6 +219,7 @@ const ProjectList: FC<Props> = ({ initialData, session: authSession }) => {
             authSession?.accessToken ?? session?.accessToken
           }`,
         },
+        // @ts-ignore
         signal,
       }),
     getNextPageParam: (lastPage) => {
